@@ -1,0 +1,7 @@
+ANXS.nodejs,v1.1.0
+jdauphant.nginx,v1.3.3
+geerlingguy.php,1.4.5
+geerlingguy.ruby,2.0.1
+geerlingguy.mysql,1.4.3
+kosssi.composer,v1.3.0
+AbdoulNdiaye.Blackfire,v1.0.2

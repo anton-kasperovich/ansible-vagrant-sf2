@@ -1,0 +1,49 @@
+---
+  - name: Install Sass and Compass ruby gems
+    sudo: no
+    gem: name={{ item.name }} version={{ item.version }} state=present
+    with_items:
+      - { name: 'sass', version: '3.4.9' }
+      - { name: 'compass', version: '0.12.6' }
+
+  - name: Install composer dependencies
+    sudo: no
+    composer: command=install optimize_autoloader=yes no_dev=no working_dir=/var/www
+
+  - name: Install npm dependencies
+    sudo: no
+    environment:
+      PATH: "{{ ansible_env.PATH }}:{{ npm_env }}"
+    npm: path=/var/www
+
+  - name: Install bower dependencies
+    sudo: no
+    environment:
+      PATH: "{{ ansible_env.PATH }}:{{ npm_env }}"
+    bower: path=/var/www
+
+  - name: Install Symfony assets symlink
+    sudo: no
+    shell: php /var/www/app/console assets:install /var/www/web --symlink
+
+  - name: Check MySQL database dump exists
+    sudo: no
+    stat: path={{ db_dump_path }}
+    register: mysql_dump_file
+
+  - name: Restore MySQL database dump
+    sudo: no
+    mysql_db: name={{ db_name }} login_user={{ db_user }} login_password={{ db_pass }} state=import target={{ db_dump_path }}
+    when: mysql_dump_file.stat.exists == True
+
+  - name: Update Symfony doctrine schema
+    sudo: no
+    shell: php /var/www/app/console doctrine:schema:update --force
+
+  - name: Grunt build
+    sudo: no
+    environment:
+      PATH: "{{ ansible_env.PATH }}:{{ npm_env }}:{{ ruby_gems_env }}"
+    shell: grunt executable=/bin/bash
+    args:
+      chdir: /var/www

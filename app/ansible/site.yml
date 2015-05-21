@@ -1,0 +1,37 @@
+- hosts: all
+  gather_facts: true
+
+  vars:
+    init_packages:
+      - git
+      - curl
+      - rsync
+    ruby_gems:
+      - { name: 'sass', version: '3.4.9' }
+      - { name: 'compass', version: '0.12.6' }
+    npm_env: /var/www/node_modules/.bin
+    ruby_gems_env: /home/vagrant/.gem/ruby/1.9.1/bin
+    db_dump_path: /var/www/dump.sql
+
+    db_name: testproject
+    db_user: testproject_user
+    db_pass: testproject_pass
+
+  vars_files:
+    - vars/php.yml
+    - vars/nginx.yml
+    - vars/mysql.yml
+    - vars/nodejs.yml
+    - vars/composer.yml
+    - vars/blackfire.yml
+
+  roles:
+    - init
+    - jdauphant.nginx
+    - geerlingguy.php
+    - geerlingguy.ruby
+    - geerlingguy.mysql
+    - ANXS.nodejs
+    - kosssi.composer
+    - AbdoulNdiaye.Blackfire
+    - build

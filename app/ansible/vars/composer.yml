@@ -1,0 +1,4 @@
+composer_home_path: /home/vagrant/.composer
+composer_home_owner: vagrant
+composer_home_group: vagrant
+#composer_github_oauth: "replace_on_github_oauth_token"

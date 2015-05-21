@@ -1,0 +1,15 @@
+---
+  - name: Update apt
+    sudo: yes
+    apt:  update_cache=yes cache_valid_time=86400
+
+  - name: Install system packages
+    apt:  pkg={{ item }} state=latest
+    with_items: init_packages
+
+  - name: Add custom ENV vars to global PATH
+    sudo: yes
+    lineinfile: dest=/etc/environment state=present backrefs=yes regexp='PATH=(["]*)((?!.*?{{item}}).*?)(["]*)$' line="PATH=\1\2:{{item}}\3"
+    with_items:
+        - "{{ npm_env }}"
+        - "{{ ruby_gems_env}}"
